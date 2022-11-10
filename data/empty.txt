@@ -1,2 +1,0 @@
-so github shows folder
-where all the data files should be placed for consistency

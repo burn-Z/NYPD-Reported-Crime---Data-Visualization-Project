@@ -1,4 +1,4 @@
 data/*
-!data/empty.txt
+!data/note.txt
 .vscode
 notes_to_self.txt
