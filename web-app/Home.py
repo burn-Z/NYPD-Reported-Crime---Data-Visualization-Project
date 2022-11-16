@@ -7,19 +7,17 @@ st.write("""
 # 'Hello, *World!* :sunglasses:'
 """)
 
-q2_df = pd.read_csv('..\\data\\neighbh_crime_dist.csv',
+q2_df = pd.read_csv("C:\\Users\\jetbu\\Documents\\CTP\\NYPD-Reported-Crime---Data-Visualization-Project\\data\\neighbh_crime_dist.csv",
                  low_memory= False,
                 # nrows= 500000,
-                # parse_dates= [1],
-                # index_col= 0
                 )
 
 st.write("""
 #### Crime Count Distribution Per Borough
 """)
 
-def show_neigh_crime_pie(t_df, year):
-    selection = t_df[t_df['CMPLNT_FR_YR'] == year]
+def show_neigh_crime_pie(year):
+    selection = q2_df[q2_df['CMPLNT_FR_YR'] == year]
 
     vcs = selection['BORO_NM'].value_counts()
 
@@ -33,6 +31,10 @@ def show_neigh_crime_pie(t_df, year):
     st.plotly_chart(ax)
     # plt.show()
 
+def show_bar_chart(time, time_type):
+    # check if the time_type is year, month, day
+
+    pass
 
 available_years = [i for i in range(2006, 2022)]
 
