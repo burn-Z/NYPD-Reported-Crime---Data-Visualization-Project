@@ -38,6 +38,6 @@ def show_bar_chart(time, time_type):
 
 available_years = [i for i in range(2006, 2022)]
 
-option = st.selectbox('Choose a year', options= available_years)
+option = st.selectbox('Select a year', options= available_years)
 
 show_neigh_crime_pie(q2_df, option)
