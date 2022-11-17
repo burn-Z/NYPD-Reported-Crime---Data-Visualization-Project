@@ -1,4 +1,8 @@
-data/*
-!data/note.txt
+notebooks/data/*
+!notebooks/data/track_dir.txt
+
+web-app/data/*
+!web-app/data/track_dir.txt
+
 .vscode
 notes_to_self.txt

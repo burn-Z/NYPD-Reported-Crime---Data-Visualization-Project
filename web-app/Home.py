@@ -7,7 +7,9 @@ st.write("""
 # 'Hello, *World!* :sunglasses:'
 """)
 
-q2_df = pd.read_csv("C:\\Users\\jetbu\\Documents\\CTP\\NYPD-Reported-Crime---Data-Visualization-Project\\data\\neighbh_crime_dist.csv",
+
+
+q2_df = pd.read_csv("..\\data\\neighbh_crime_dist.csv",
                  low_memory= False,
                 # nrows= 500000,
                 )
@@ -38,6 +40,6 @@ def show_bar_chart(time, time_type):
 
 available_years = [i for i in range(2006, 2022)]
 
-option = st.selectbox('Select a year', options= available_years)
+year_choice = st.selectbox('Select a year', options= available_years)
 
-show_neigh_crime_pie(q2_df, option)
+show_neigh_crime_pie(year_choice)

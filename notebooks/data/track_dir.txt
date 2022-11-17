@@ -1,4 +1,4 @@
-All data files should be located in this directory
+All data files for notebooks should be located in this directory
 
 Local data files are not synced with github because they are too large.
 

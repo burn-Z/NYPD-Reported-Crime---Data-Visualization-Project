@@ -1,0 +1,3 @@
+* placholder file for data directory tracking
+
+All data files for web-app can be located in this directory
