@@ -1,5 +1,4 @@
-notebooks/data/*
-!notebooks/data/track_dir.txt
+notebooks/*
 
 web-app/data/*
 !web-app/data/track_dir.txt

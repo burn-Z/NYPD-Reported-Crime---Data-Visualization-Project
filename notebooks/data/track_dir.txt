@@ -1,8 +1,0 @@
-All data files for notebooks should be located in this directory
-
-Local data files are not synced with github because they are too large.
-
-All data used can be found at:
-
-1) https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Historic/qgea-i56i
-2)
