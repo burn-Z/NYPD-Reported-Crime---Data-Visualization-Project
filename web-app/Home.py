@@ -1,81 +1,114 @@
+import os
 import streamlit as st
 import pandas as pd
-import matplotlib.pyplot as plt
+import numpy as np
 import plotly.graph_objects as go
 import plotly.express as px
 
-q2_df = pd.read_csv("web-app\\data\\neighbh_crime_dist.csv",
-                 low_memory= False,
-                 nrows= 500000,
-                 index_col= 'id'
-                )
 
-available_boroughs = q2_df.borough.unique()
+# Page setting
+st.set_page_config(
+    page_title="NYPD Crime Dashboard",
+    page_icon=":shark:",
+    layout="wide",
+    initial_sidebar_state= "auto",
+)
 
-available_years = q2_df.year.unique()
-default_years = [2021]
+# # consitent pathing
+# cur_path = os.path.join(os.getcwd(), 'style.css')
+# print('------', cur_path)
 
-available_category = q2_df.category.unique()
+# applying style sheet
+with open('web-app\\style.css') as s:
+    st.markdown(f'<style>{s.read()}</style>', unsafe_allow_html= True)
 
+# loading in data
+@st.cache
+def get_data_csv():
+    df = pd.read_csv("web-app\\data\\neighbh_crime_dist.csv",
+                    low_memory= False,
+                    nrows= 1000000,
+                    index_col= 'id',
+                    ).drop(labels= ['Unnamed: 0'], axis= 1)
 
-def show_borough_line_chart(bor: list[str], years: list[int]):
-    selection = q2_df[q2_df['borough'].isin(bor) | q2_df['year'].isin(years)]
+    return df
 
-    vcs = selection[['borough', 'year']].value_counts().reset_index(name= 'Count').sort_values(by= ['year'])
+df = get_data_csv()
 
-    ax = px.line(vcs, x= 'year', y= 'Count', color= 'borough', labels={'year': 'Year'}, )
-    # st.line_chart(vcs, x= 'year', y= ['borough', 'Count'] )
+# getting filter fields
+available_boroughs = df.borough.unique()
+available_years = df.year.unique()
+available_category = df.category.unique()
 
-    st.plotly_chart(ax)
+# UI for filters
+slct_boro = st.sidebar.multiselect('Filter by Borough', available_boroughs, available_boroughs)
+st.sidebar.markdown('   ---')
+slct_yr = st.sidebar.multiselect('Filter by Year', available_years, available_years[-1])
+# crime_cats = st.sidebar.multiselect('Filter by Crime Category', available_category)
 
-def show_borough_crime_pie(years):
-    selection = q2_df[q2_df['year'].isin(years)]
-
-    vcs = selection['borough'].value_counts()
-
-    borough = pd.DataFrame(data= vcs.index, columns= ['borough'])
-    borough['values'] = vcs.values
-
-    ax = go.Figure(data= [go.Pie(labels= borough['borough'], values= borough['values'])])
-
-    years_text = ', '.join([str(i) for i in years])
-    ax.update_layout( title_text = f'Distribution of Crime in {years_text}')
-
-    st.plotly_chart(ax)
-    # plt.show()
-
-def show_borough_crime_bar(years: list):
-    selection = q2_df[q2_df['year'].isin(years)]
-
-    vcs = selection[['borough']].value_counts().reset_index(name= 'Count')
-
-    ax = px.bar(vcs, x= 'borough', y= 'Count', labels= {'borough': 'Borough', 'Count':''})
-
-    years_text = ', '.join([str(i) for i in years])
-    ax.update_layout( title_text = f'Crime Count Distribution per Borough in {years_text}')
-
-    st.plotly_chart(ax)
-
-def show_the_witching_hour(bor, yr, cat):
-    selection = q2_df[q2_df['borough'].isin(bor) & q2_df['year'].isin(yr) & q2_df['category'].isin(cat)]
-
-    #
-
-
-# should only be able to choose one option
-selected_borough = st.sidebar.multiselect('Filter by Borough', available_boroughs)
-selected_years = st.sidebar.multiselect('Filter by Year', available_years, available_years[-1])
-selected_crime_type = st.sidebar.multiselect('Filter by Crime Category', available_category)
-
-selected_visual = st.sidebar.button('The Witching Hour')
-
-if not selected_borough or not selected_years:
-    show_borough_crime_pie(default_years)
+# Logic for filter selections
+if not (slct_boro or slct_yr):
+    df_slct = df
+elif not slct_boro and slct_yr:
+    df_slct = df.query("year == @slct_yr")
+elif slct_boro and not slct_yr:
+    df_slct = df.query("borough in @slct_boro")
 else:
-    show_borough_crime_bar(selected_years)
-    show_borough_line_chart(selected_borough, selected_years)
+    df_slct = df.query("borough in @slct_boro & year in @slct_yr")
 
+# option to see raw data
+c1, c2 = st.columns(2)
 
-# year_choice = st.sidebar.selectbox('Select a year', options= available_years)
+with c1:
+    show_sample = st.sidebar.button('Sample Data')
+with c2:
+    extra = st.sidebar.button('extra')
 
-# show_neigh_crime_pie(year_choice)
+if show_sample:
+    st.write(df_slct[['category', 'offense', 'borough', 'date']].sample(10))
+
+# def show_borough_line_chart(bor: list[str], years: list[int]):
+#     vcs = df_slct[['borough', 'year']].value_counts().reset_index(name= 'Count').sort_values(by= ['year'])
+
+#     ax = px.line(vcs, x= 'year', y= 'Count', color= 'borough', labels={'year': 'Year'}, )
+#     # st.line_chart(vcs, x= 'year', y= ['borough', 'Count'] )
+
+#     st.plotly_chart(ax)
+
+# def show_borough_crime_pie(years):
+
+#     vcs = df_slct['borough'].value_counts()
+
+#     borough = pd.DataFrame(data= vcs.index, columns= ['borough'])
+#     borough['values'] = vcs.values
+
+#     ax = go.Figure(data= [go.Pie(labels= borough['borough'], values= borough['values'])])
+
+#     years_text = ', '.join([str(i) for i in years])
+#     ax.update_layout( title_text = f'Distribution of Crime in {years_text}')
+
+#     st.plotly_chart(ax)
+#     # plt.show()
+
+# def show_borough_crime_bar(years: list):
+#     vcs = df_slct[['borough']].value_counts().reset_index(name= 'Count')
+
+#     ax = px.bar(vcs, x= 'borough', y= 'Count', labels= {'borough': 'Borough', 'Count':''})
+
+#     years_text = ', '.join([str(i) for i in years])
+#     ax.update_layout( title_text = f'Crime Count Distribution per Borough in {years_text}')
+
+#     st.plotly_chart(ax)
+
+# def show_the_witching_hour(bor, yr, cat):
+#     pass
+
+#     #
+
+# selected_visual = st.sidebar.button('The Witching Hour')
+
+# if not slct_boro or not slct_yr:
+#     show_borough_crime_pie(available_years)
+# else:
+#     show_borough_crime_bar(slct_yr)
+#     show_borough_line_chart(slct_boro, slct_yr)
