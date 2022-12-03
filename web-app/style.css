@@ -1,0 +1,19 @@
+/* #MainMenu {visibility: hidden;}
+footer {visibility: hidden;}
+header {visibility: hidden;} */
+
+div.css-e7z11k.e17g77xh0 {
+    padding: 3%;
+    border-radius: 5px;
+}
+
+div.css-z091fk.edgvbvh10 {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+}
