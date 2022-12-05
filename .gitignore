@@ -1,7 +1,7 @@
 notebooks/*
 
 web-app/data/*
-!web-app/data/track_dir.txt
+!web-app/data/transform.py
 
 .vscode
 notes_to_self.txt
