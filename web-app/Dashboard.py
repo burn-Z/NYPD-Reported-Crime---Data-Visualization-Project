@@ -25,11 +25,12 @@ with open('web-app\\style.css') as s:
 # loading in data
 @st.cache
 def load_data():
-    df = pd.read_csv("web-app\\data\\neighbh_crime_dist.csv",
+    df = pd.read_csv("web-app\\data\\data_subset.csv",
                     low_memory= False,
-                    nrows= 1000000,
+                    # nrows= 1000000,
                     index_col= 'id',
-                    ).drop(labels= ['Unnamed: 0'], axis= 1)
+                    )
+    # .drop(labels= ['Unnamed: 0'], axis= 1)
 
     return df
 
@@ -106,7 +107,39 @@ def show_yr_ovr_yr(df_temp, filter, x, color):
         color= color,
         )
 
+    fig.update_layout(
+        xaxis= {
+            # 'visible': False,
+            'showgrid': False,
+            # 'dtick': "M1",
+        },
+        yaxis= {
+            # 'visible': False,
+            'showgrid': False
+        }
+    )
+    # fig.update_xaxes(
+    # dtick="M1",
+    # tickformat="%b\n%Y")
     return fig
+
+@st.cache
+def show_per(df_temp, names):
+    fig = px.pie(
+        df_temp,
+        names = names
+    )
+
+    vcs = df_temp.value_counts([names]).reset_index(name= 'Count').sort_values(by= names)
+    fig = px.bar(
+        vcs,
+        x = names,
+        y = 'Count',
+        color= names
+    )
+
+    return fig
+
 
 # load data into memory
 with st.spinner('Loading dataset...'):
@@ -115,9 +148,11 @@ with st.spinner('Loading dataset...'):
 ## columns names
 borough = 'borough'
 year = 'year'
+month = 'month'
 category = 'category'
 offense = 'offense'
-
+date = 'date'
+day = 'day'
 
 # SIDEBAR FILTERS
 ## getting filter fields
@@ -155,9 +190,10 @@ if not slct_ofnsc:
 # df_slct = query_data(df, borough, year, category)
 df_slct = df.query(f"{borough} in @slct_boro & {category} in @slct_ofnsc & {year} >= @slct_fr_yr & {year} <= @slct_to_yr")
 
+# print(df_slct['month'].unique())
 # PAGE CONTENTS
 
-c1, c2 = st.columns([2,8])
+c1, c2, c3 = st.columns([2,4,4])
 
 with c1:
     try:
@@ -175,13 +211,19 @@ with c1:
 with c2:
     st.plotly_chart(show_ofns_cat(df_slct, category), use_container_width= True)
 
+with c3:
+    st.plotly_chart(show_per(df_slct, day))
+
+
 st.plotly_chart(
     show_ofns_desc(df_slct, offense, category),
     use_container_width= True
     )
 
+
+filt_by = month if slct_to_yr - slct_fr_yr <=2 else year
 st.plotly_chart(
-    show_yr_ovr_yr(df_slct,[borough, year], year, borough),
+    show_yr_ovr_yr(df_slct,[borough, filt_by], filt_by, borough),
     use_container_width= True,
 )
 
