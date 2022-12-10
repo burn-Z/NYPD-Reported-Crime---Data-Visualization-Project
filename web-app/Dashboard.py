@@ -1,4 +1,4 @@
-# import os
+import os
 import streamlit as st
 import pandas as pd
 # import numpy as np
@@ -19,15 +19,15 @@ st.set_page_config(
 # print('------', cur_path)
 
 # applying style sheet
-with open('web-app\\style.css') as s:
+with open(os.path.join(os.getcwd(), 'style.css')) as s:
     st.markdown(f'<style>{s.read()}</style>', unsafe_allow_html= True)
 
 # loading in data
 @st.cache
-def load_data():
-    df = pd.read_csv("web-app\\data\\data_subset.csv",
-                    low_memory= False,
-                    # nrows= 1000000,
+def load_data(filePath: str):
+    df = pd.read_csv(filePath,
+                    # low_memory= False,
+                    nrows= 1000000,
                     index_col= 'id',
                     )
     # .drop(labels= ['Unnamed: 0'], axis= 1)
@@ -143,7 +143,7 @@ def show_per(df_temp, names):
 
 # load data into memory
 with st.spinner('Loading dataset...'):
-    df = load_data()
+    df = load_data(os.path.join(os.getcwd(), 'data', 'data_subset.csv'))
 
 ## columns names
 borough = 'borough'
