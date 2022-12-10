@@ -13,9 +13,9 @@ ___
 - ### .streamlit/
     -  app layout and theme configuration files
 - ### data/
-    - `NYPD_ComplaintDataHistoric.csv`[^note]\
-    - `data_subset.csv`[^note]\
-    - `transform.py` - run this create data_subset.csv
+    - `NYPD_ComplaintDataHistoric.csv`[^note]
+    - `data_subset.csv`[^note]
+    - `transform.py` - run this to create data_subset.csv
 - ### pages/
     - about.py - Information Page
 
@@ -33,7 +33,10 @@ ___
 
 ## How to Run Locally
 - Download this repo
-- Create new Conda environment
-- Install packages from requirements folder
-- Go to terminal/command line and run the following command in root directory :
+- Change directory to `web-app\` folder
+- Install packages from `requirement.txt`
+- Download the dataset and add to `data\`
+- Run the following to copy the columns needed into a new csv `data_subset.csv':
+  `python3 data\transform.py`
+- Run the following to launch the app:
   `streamlit run Dashboard.py`
