@@ -1,26 +1,24 @@
 import os
 import streamlit as st
 import pandas as pd
-# import numpy as np
-# import plotly.graph_objects as go
 import plotly.express as px
+from math import ceil
 
 
 # Page setting
 st.set_page_config(
     page_title="NYPD Crime Dashboard",
-    page_icon=":shark:",
+    page_icon=":chart:",
     layout="wide",
     initial_sidebar_state= "auto",
 )
 
-# # consistent pathing
-# cur_path = os.path.join(os.getcwd(), 'style.css')
-# print('------', cur_path)
 
 # applying style sheet
-with open(os.path.join(os.getcwd(), 'style.css')) as s:
+sheet_path = os.path.join(os.getcwd(), 'style.css')
+with open(sheet_path) as s:
     st.markdown(f'<style>{s.read()}</style>', unsafe_allow_html= True)
+
 
 # loading in data
 @st.cache
@@ -28,17 +26,14 @@ def load_data(filePath: str):
     df = pd.read_csv(filePath,
                     # low_memory= False,
                     nrows= 1000000,
-                    index_col= 'id',
+                    index_col= 0,
                     )
-    # .drop(labels= ['Unnamed: 0'], axis= 1)
 
     return df
 
 # @st.cache
-def query_data(df_temp, boro, yr, cat):
-    # df_slct = df_temp.query(f"{borough} in @slct_boro & {category} in @slct_ofnsc & {year} >= @slct_fr_yr & {year} <= @slct_to_yr")
-    # return df_slct
-    pass
+# def query_data(df_temp, boro, yr, cat):
+#     pass
 
 # Offense Category Pie Chart
 @st.cache
@@ -46,11 +41,13 @@ def show_ofns_cat(df_temp, name):
     fig = px.pie(
         df_temp,
         names= name,
+        title= 'Distribution of Offense Category',
         # color_discrete_sequence= px.colors.sequential.RdBu
     )
 
     fig.update_traces(
-        textposition= 'inside'
+        textposition= 'inside',
+        # hoverinfo= 'label+percent'
         )
 
     fig.update_layout(
@@ -58,11 +55,11 @@ def show_ofns_cat(df_temp, name):
         uniformtext_mode= 'hide'
         )
 
-    # st.plotly_chart(fig)
     return fig
 
 @st.cache
 def show_ofns_desc(df_temp, x, color):
+    # # Vertical bar Chart
     # fig = px.bar(
     #     df_temp.value_counts([x, color]).reset_index(name= 'Count'),
     #     x = x,
@@ -74,6 +71,7 @@ def show_ofns_desc(df_temp, x, color):
     #     height= height,
     # )
 
+    # Horizontal Bar Chart
     vcs = df_temp.value_counts([x, color]).reset_index(name= 'Count').sort_values(by= 'Count')
     fig = px.bar(
         vcs,
@@ -87,7 +85,10 @@ def show_ofns_desc(df_temp, x, color):
         orientation= 'h',
     )
 
-    fig.update_traces(textposition= 'inside')
+    fig.update_traces(
+        textposition= 'inside'
+        )
+
     fig.update_layout(
         xaxis={'visible': False, 'showticklabels': False},
         uniformtext_minsize = 8,
@@ -118,19 +119,16 @@ def show_yr_ovr_yr(df_temp, filter, x, color):
             'showgrid': False
         }
     )
+
     # fig.update_xaxes(
     # dtick="M1",
     # tickformat="%b\n%Y")
+
     return fig
 
 @st.cache
 def show_per(df_temp, names):
-    fig = px.pie(
-        df_temp,
-        names = names
-    )
-
-    vcs = df_temp.value_counts([names]).reset_index(name= 'Count').sort_values(by= names)
+    vcs = df_temp.value_counts([names]).reset_index(name= 'Count').sort_values(by= 'Count')
     fig = px.bar(
         vcs,
         x = names,
@@ -142,17 +140,19 @@ def show_per(df_temp, names):
 
 
 # load data into memory
+dataset_path = os.path.join(os.getcwd(), 'data', 'data_subset.csv')
 with st.spinner('Loading dataset...'):
-    df = load_data(os.path.join(os.getcwd(), 'data', 'data_subset.csv'))
+    df = load_data(dataset_path)
 
-## columns names
-borough = 'borough'
-year = 'year'
-month = 'month'
-category = 'category'
-offense = 'offense'
-date = 'date'
-day = 'day'
+## abstract columns names
+borough = 'Borough'
+category = 'Offense Category'
+offense = 'Offense'
+date = 'Date and Time'
+year = 'Year'
+month = 'Month'
+day = 'Day of the Week'
+
 
 # SIDEBAR FILTERS
 ## getting filter fields
@@ -167,15 +167,14 @@ st.sidebar.markdown('   ---')
 slct_ofnsc = st.sidebar.multiselect('Filter by Offense Category', available_ofns_desc, available_ofns_desc)
 st.sidebar.markdown('   ---')
 
-# slct_yr = st.sidebar.multiselect('Filter by Year', available_years, available_years)
-slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[0], 1)
-slct_to_yr = st.sidebar.number_input('To', slct_fr_yr, available_years[-1], available_years[-1], 1,)
+st.sidebar.write('Filter By Year')
+slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[-1], 1.0)
+slct_to_yr = st.sidebar.number_input('To', slct_fr_yr, available_years[-1], available_years[-1], 1.0,)
 st.sidebar.markdown('   ---')
-#
-
 
 ## option to see raw data
-show_sample = st.sidebar.button('Sample Data')
+show_sample = st.sidebar.button('Sample')
+
 
 ## Logic for filter selections
 if not slct_boro:
@@ -188,31 +187,47 @@ if not slct_ofnsc:
 
 # query data based on selection
 # df_slct = query_data(df, borough, year, category)
-df_slct = df.query(f"{borough} in @slct_boro & {category} in @slct_ofnsc & {year} >= @slct_fr_yr & {year} <= @slct_to_yr")
+df_slct = df.query(f"{borough} in @slct_boro & `{category}` in @slct_ofnsc & {year} >= @slct_fr_yr & {year} <= @slct_to_yr")
 
-# print(df_slct['month'].unique())
+
 # PAGE CONTENTS
+try:
+    temp0 = df_slct.query(f'{year} == @slct_fr_yr').shape[0]
+    temp1 = df_slct.query(f'{year} == @slct_to_yr').shape[0]
+    delta = 100 * ( (temp0/temp1) - 1)
+except ZeroDivisionError:
+    delta = 0
 
-c1, c2, c3 = st.columns([2,4,4])
+incident_count = df_slct.shape[0]
+
+
+c1, c2 = st.columns(2)
 
 with c1:
-    try:
-        temp0 = df_slct.query(f'{year} == @slct_fr_yr').shape[0]
-        temp1 = df_slct.query(f'{year} == @slct_to_yr').shape[0]
-        delta = 100 * ( (temp0/temp1) - 1)
-    except ZeroDivisionError:
-        delta = 0
-    incident_count = df_slct.shape[0]
-
     label = 'Number of Incidents Reported '
     label += f'in {slct_fr_yr}' if slct_fr_yr == slct_to_yr else f'from {slct_fr_yr} to {slct_to_yr}'
-    st.metric(label= label, value= incident_count, delta= f'{str(int(delta))}%', delta_color= 'inverse')
+    st.metric(label= label, value= ceil(incident_count), delta= f'{str(int(delta))}%', delta_color= 'inverse',)
+
 
 with c2:
-    st.plotly_chart(show_ofns_cat(df_slct, category), use_container_width= True)
+    label = 'Incident Count per 100k'
+    per100k = ceil(incident_count * 100_000 / 20_000_000)
+    st.metric(label= label, value= per100k)
+
+
+c3, c4 = st.columns([1,2])
 
 with c3:
-    st.plotly_chart(show_per(df_slct, day))
+    st.plotly_chart(
+        show_ofns_cat(df_slct, category),
+        use_container_width= True,
+        )
+
+with c4:
+    st.plotly_chart(
+        show_per(df_slct, day),
+        use_container_width= True,
+        )
 
 
 st.plotly_chart(
@@ -228,4 +243,4 @@ st.plotly_chart(
 )
 
 if show_sample:
-    st.write(df_slct[['category', 'offense', 'borough', 'date']].sample(10))
+    st.write(df_slct[['category', 'offense', 'borough', 'date']].sample(25))
