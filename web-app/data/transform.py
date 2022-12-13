@@ -68,7 +68,7 @@ df.dropna(inplace= True)
 
 writePath = path.join(getcwd(), 'data', 'data_subset.csv')
 ###########################
-print(f'...Writing dataset to: {writePath}')
+print(f'...Writing dataset \nTo: {writePath}')
 ###########################
 
 df.to_csv(
