@@ -57,6 +57,26 @@ def show_ofns_cat(df_temp, name):
 
     return fig
 
+
+@st.cache
+def show_per(df_temp, names):
+    cats = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+
+    y = 'Average'
+    vcs = df_temp.groupby(names)[names].count().to_frame(y).reindex(cats).apply(lambda x: x/52)
+
+    x = vcs.index
+    fig = px.bar(
+        vcs,
+        x = x,
+        y = y,
+        range_y= [max(vcs[y].min() - 50, 0), vcs[y].max() + 10]
+        # color= vcs.index
+    )
+
+    return fig
+
+
 @st.cache
 def show_ofns_desc(df_temp, x, color):
     # # Vertical bar Chart
@@ -123,18 +143,6 @@ def show_yr_ovr_yr(df_temp, filter, x, color):
     # fig.update_xaxes(
     # dtick="M1",
     # tickformat="%b\n%Y")
-
-    return fig
-
-@st.cache
-def show_per(df_temp, names):
-    vcs = df_temp.value_counts([names]).reset_index(name= 'Count').sort_values(by= 'Count')
-    fig = px.bar(
-        vcs,
-        x = names,
-        y = 'Count',
-        color= names
-    )
 
     return fig
 

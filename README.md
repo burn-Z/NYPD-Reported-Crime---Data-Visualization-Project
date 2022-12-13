@@ -17,14 +17,14 @@ ___
     - `data_subset.csv`[^note]
     - `transform.py` - run this to create data_subset.csv
 - ### pages/
-    - about.py - Information Page
+    - `about.py` - Information Page
 
-- ### `Dashboard.py`
+- ### Dashboard.py
     - web app home
-- ### `style.css`
+- ### style.css
     - more detailed styling for webapp elements
 
-- ### `requirements.txt`
+- ### requirements.txt
     - package list
 
 [^note]: File not included
@@ -36,7 +36,7 @@ ___
 - Change directory to `web-app\` folder
 - Install packages from `requirement.txt`
 - Download the dataset and add to `data\`
-- Run the following to copy the columns needed into a new csv `data_subset.csv':
+- Run the following to copy the columns needed into a new csv `data_subset.csv`:
   `python3 data\transform.py`
 - Run the following to launch the app:
   `streamlit run Dashboard.py`
