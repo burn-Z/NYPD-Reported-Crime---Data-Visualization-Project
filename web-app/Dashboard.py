@@ -41,7 +41,7 @@ def show_ofns_cat(df_temp, name):
     fig = px.pie(
         df_temp,
         names= name,
-        title= 'Distribution of Offense Category',
+        title= 'Offense Category Distribution',
         # color_discrete_sequence= px.colors.sequential.RdBu
     )
 
@@ -157,7 +157,8 @@ day = 'Day of the Week'
 # SIDEBAR FILTERS
 ## getting filter fields
 available_boroughs = df[borough].unique()
-available_years = sorted(df[year].unique())
+available_years = [int(a) for a in sorted(df[year].unique())]
+# available_years = sorted(df[year].unique())
 available_ofns_desc = df[category].unique()
 
 
@@ -167,9 +168,9 @@ st.sidebar.markdown('   ---')
 slct_ofnsc = st.sidebar.multiselect('Filter by Offense Category', available_ofns_desc, available_ofns_desc)
 st.sidebar.markdown('   ---')
 
-st.sidebar.write('Filter By Year')
-slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[-1], 1.0)
-slct_to_yr = st.sidebar.number_input('To', slct_fr_yr, available_years[-1], available_years[-1], 1.0,)
+st.sidebar.write(f'Filter By Year({available_years[0]} - {available_years[-1]})')
+slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[-1], 1)
+slct_to_yr = st.sidebar.number_input('To', slct_fr_yr, available_years[-1], available_years[-1], 1,)
 st.sidebar.markdown('   ---')
 
 ## option to see raw data
