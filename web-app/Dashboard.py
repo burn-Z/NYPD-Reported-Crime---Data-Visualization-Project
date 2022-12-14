@@ -59,11 +59,11 @@ def show_ofns_cat(df_temp, name):
 
 
 @st.cache
-def show_per(df_temp, names):
+def show_per(df_temp, names, yearCount):
     cats = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
 
     y = 'Average'
-    vcs = df_temp.groupby(names)[names].count().to_frame(y).reindex(cats).apply(lambda x: x/52)
+    vcs = df_temp.groupby(names)[names].count().to_frame(y).reindex(cats).apply(lambda x: x/(52*yearCount))
 
     x = vcs.index
     fig = px.bar(
@@ -176,9 +176,17 @@ st.sidebar.markdown('   ---')
 slct_ofnsc = st.sidebar.multiselect('Filter by Offense Category', available_ofns_desc, available_ofns_desc)
 st.sidebar.markdown('   ---')
 
-st.sidebar.write(f'Filter By Year({available_years[0]} - {available_years[-1]})')
-slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[-1], 1)
-slct_to_yr = st.sidebar.number_input('To', slct_fr_yr, available_years[-1], available_years[-1], 1,)
+# st.sidebar.write(f'Filter By Year({available_years[0]} - {available_years[-1]})')
+# st.sidebar.write(f'Filter By Year')
+slct_fr_yr, slct_to_yr = st.sidebar.select_slider(
+    "Filter By Year(s)",
+    options= available_years,
+    value= (2020, 2021)
+    )
+
+# slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[-2], 1)
+# slct_to_yr = st.sidebar.number_input('To', slct_fr_yr, available_years[-1], available_years[-1], 1,)
+yearCount = slct_to_yr-slct_fr_yr+1
 st.sidebar.markdown('   ---')
 
 ## option to see raw data
@@ -234,7 +242,7 @@ with c3:
 
 with c4:
     st.plotly_chart(
-        show_per(df_slct, day),
+        show_per(df_slct, day, yearCount),
         use_container_width= True,
         )
 
@@ -245,7 +253,7 @@ st.plotly_chart(
     )
 
 
-filt_by = month if slct_to_yr - slct_fr_yr <=2 else year
+filt_by = month if yearCount == 1 else year
 st.plotly_chart(
     show_yr_ovr_yr(df_slct,[borough, filt_by], filt_by, borough),
     use_container_width= True,
