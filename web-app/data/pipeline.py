@@ -43,7 +43,7 @@ df['Date and Time'] = pd.to_datetime(df['Date and Time'], errors= 'coerce')
 
 
 ###########################
-print('...Appending month, day of the week and year to the dataset')
+print('...Separating month, day of the week and year, and appending to the dataset')
 ###########################
 
 df['Year'] = df['Date and Time'].dt.year

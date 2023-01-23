@@ -1,7 +1,7 @@
 notebooks/*
 
 web-app/data/*
-!web-app/data/transform.py
+!web-app/data/pipeline.py
 
 .vscode
-notes_to_self.txt
+notes.txt

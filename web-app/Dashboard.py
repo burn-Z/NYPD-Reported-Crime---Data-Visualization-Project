@@ -22,11 +22,11 @@ with open(sheet_path) as s:
 
 # loading in data
 @st.cache
-def load_data(filePath: str):
+def load_data(filePath: str, nrows = None, index_col = 0):
     df = pd.read_csv(filePath,
                     # low_memory= False,
-                    nrows= 1000000,
-                    index_col= 0,
+                    nrows= nrows,
+                    index_col= index_col,
                     )
 
     return df
@@ -177,11 +177,10 @@ slct_ofnsc = st.sidebar.multiselect('Filter by Offense Category', available_ofns
 st.sidebar.markdown('   ---')
 
 # st.sidebar.write(f'Filter By Year({available_years[0]} - {available_years[-1]})')
-# st.sidebar.write(f'Filter By Year')
 slct_fr_yr, slct_to_yr = st.sidebar.select_slider(
     "Filter By Year(s)",
     options= available_years,
-    value= (2020, 2021)
+    value= (available_years[-2], available_years[-1])
     )
 
 # slct_fr_yr = st.sidebar.number_input('From', available_years[0], available_years[-1], available_years[-2], 1)
@@ -190,7 +189,7 @@ yearCount = slct_to_yr-slct_fr_yr+1
 st.sidebar.markdown('   ---')
 
 ## option to see raw data
-show_sample = st.sidebar.button('Sample')
+# show_sample = st.sidebar.button('Sample')
 
 
 ## Logic for filter selections
@@ -221,8 +220,8 @@ incident_count = df_slct.shape[0]
 c1, c2 = st.columns(2)
 
 with c1:
-    label = 'Number of Incidents Reported '
-    label += f'in {slct_fr_yr}' if slct_fr_yr == slct_to_yr else f'from {slct_fr_yr} to {slct_to_yr}'
+    label = 'Number of Incidents Reported'
+    label += f' in {slct_fr_yr}' if slct_fr_yr == slct_to_yr else f' from {slct_fr_yr} to {slct_to_yr}'
     st.metric(label= label, value= ceil(incident_count), delta= f'{str(int(delta))}%', delta_color= 'inverse',)
 
 
@@ -259,5 +258,5 @@ st.plotly_chart(
     use_container_width= True,
 )
 
-if show_sample:
-    st.write(df_slct[['category', 'offense', 'borough', 'date']].sample(25))
+# if show_sample:
+#     st.write(df_slct[['category', 'offense', 'borough', 'date']].sample(25))

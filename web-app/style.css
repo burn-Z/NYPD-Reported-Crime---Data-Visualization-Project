@@ -2,6 +2,11 @@
 footer {visibility: hidden;}
 header {visibility: hidden;} */
 
+[data-testid="stMetricValue"] {
+    font-size: 50px;
+    /* background-color: chartreuse; */
+}
+
 div.css-e7z11k.e17g77xh0 {
     padding: 3%;
     border-radius: 5px;

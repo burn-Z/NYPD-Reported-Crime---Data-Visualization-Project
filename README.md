@@ -15,7 +15,7 @@ ___
 - ### data/
     - `NYPD_ComplaintDataHistoric.csv`[^note]
     - `data_subset.csv`[^note]
-    - `transform.py` - run this to create data_subset.csv
+    - `pipeline.py` - run this to create data_subset.csv
 - ### pages/
     - `about.py` - Information Page
 
@@ -24,8 +24,8 @@ ___
 - ### style.css
     - more detailed styling for webapp elements
 
-- ### requirements.txt
-    - package list
+- ### environment.yml
+    - anaconda package list
 
 [^note]: File not included
 
@@ -34,9 +34,9 @@ ___
 ## How to Run Locally
 - Download this repo
 - Change directory to `web-app\` folder
-- Install packages from `requirement.txt`
+- Install packages from `environment.yml`
 - Download the dataset and add to `data\`
 - Run the following to copy the columns needed into a new csv `data_subset.csv`:
-  `python3 data\transform.py`
+  `python3 data\pipeline.py`
 - Run the following to launch the app:
   `streamlit run Dashboard.py`
