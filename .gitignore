@@ -1,7 +1,8 @@
 notebooks/*
 
-web-app/data/*
-!web-app/data/pipeline.py
+data/*
+!data/pipeline.py
+!data/data_pipeline.py
 
 .vscode
 notes.txt
