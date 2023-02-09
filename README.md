@@ -20,12 +20,12 @@ ___
     - `about.py` - Information Page
 
 - ### Dashboard.py
-    - web app home
+    - web app home page
 - ### style.css
     - more detailed styling for webapp elements
 
 - ### environment.yml
-    - anaconda package list
+    - anaconda package list to replicate environment
 
 [^note]: File not included
 
@@ -33,9 +33,8 @@ ___
 
 ## How to Run Locally
 - Download this repo
-- Change directory to `web-app\` folder
-- Install packages from `environment.yml`
-- Download the dataset and add to `data\`
+- Install packages from `environment.yml` (in a virtual environment)
+- Download the dataset into `data\` directory
 - Run the following to copy the columns needed into a new csv `data_subset.csv`:
   `python3 data\pipeline.py`
 - Run the following to launch the app:
