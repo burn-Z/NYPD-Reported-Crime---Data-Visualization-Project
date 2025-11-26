@@ -4,12 +4,12 @@
 
 An interactive dashboard web app on the crime rate in New york since 2006
 
-## Dataset Located at
+## Dataset Location
 - https://data.cityofnewyork.us/Public-Safety/NYPD-Complaint-Data-Historic/qgea-i56i
 
 ___
 
-## Project Structure
+## Project Structure(src/)
 - ### .streamlit/
     -  app layout and theme configuration files
 - ### data/
@@ -33,8 +33,8 @@ ___
 
 ## How to Run Locally
 - Download this repo
-- Install packages from `environment.yml` (in a virtual environment)
-- Download the dataset into `data\` directory
+- Install anaconda and pip packages from `environment.yml` (in a virtual environment)
+- Download the [dataset](#dataset-location) into `data\` directory
 - Run the following to copy the columns needed into a new csv `data_subset.csv`:
   `python3 data\pipeline.py`
 - Run the following to launch the app:
